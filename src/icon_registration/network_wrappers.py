@@ -49,20 +49,22 @@ class RegistrationModule(nn.Module):
 
     def assign_identity_map(self, input_shape, parents_identity_map=None):
         self.input_shape = np.array(input_shape)
-        self.input_shape[0] = 1
+        # self.input_shape[0] = 1
         self.spacing = 1.0 / (self.input_shape[2::] - 1)
 
         # if parents_identity_map is not None:
         #    self.identity_map = parents_identity_map
         # else:
         _id = identity_map_multiN(self.input_shape, self.spacing)
-        self.register_buffer("identity_map", torch.from_numpy(_id), persistent=False)
+        self.register_buffer(
+            "identity_map", torch.from_numpy(_id), persistent=False)
 
         if self.downscale_factor != 1:
             child_shape = np.concatenate(
                 [
                     self.input_shape[:2],
-                    np.ceil(self.input_shape[2:] / self.downscale_factor).astype(int),
+                    np.ceil(self.input_shape[2:] /
+                            self.downscale_factor).astype(int),
                 ]
             )
         else:
@@ -247,7 +249,7 @@ class DownsampleRegistration(RegistrationModule):
         return self.net(image_A, image_B)
 
 
-### DEPRECATED
+# DEPRECATED
 def warninfo(message):
     from inspect import getframeinfo, stack
     import warnings
